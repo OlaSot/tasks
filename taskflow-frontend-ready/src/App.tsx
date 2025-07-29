@@ -1,7 +1,17 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import "./index.css";
 
 export default function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/home"); 
+    }
+  }, [navigate]);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white px-4">
       <div className="bg-slate-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-10 w-full max-w-md text-center border border-slate-700">

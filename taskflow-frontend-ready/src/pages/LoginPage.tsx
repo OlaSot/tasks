@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { login as loginRequest } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
+import { createLog } from "../api/logs";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -10,18 +11,24 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
 
-    try {
-      const data = await loginRequest(username, password);
-      login(data.token); 
-      navigate("/home");
-    } catch (err) {
-      setError("Login failed. Please check your credentials.");
-    }
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+
+  try {
+    const data = await loginRequest(username, password);
+    login(data.token);
+
+  
+const log = await createLog(data.token);
+localStorage.setItem("logId", log._id); 
+
+    navigate("/home");
+  } catch (err) {
+    setError("Login failed. Please check your credentials.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
@@ -58,6 +65,17 @@ export default function LoginPage() {
             Login
           </button>
         </form>
+
+     
+        <p className="text-center text-gray-400 text-sm mt-6">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-400 hover:text-blue-500 underline"
+          >
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );
