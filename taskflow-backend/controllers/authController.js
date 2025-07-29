@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import UserLog from '../models/UserLog.js';
 
 const createToken = (user) => {
   return jwt.sign(
     {
       id: user._id,
       username: user.username,
-      role: user.role 
+      role: user.role
 
     },
     process.env.JWT_SECRET,
@@ -41,6 +42,18 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
 
     const token = createToken(user);
+
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    await UserLog.create({
+      user: user._id,
+      username: user.username,
+      role: user.role,
+      ip: ip,
+      loginAt: new Date(),
+      tokenName: req.headers["user-agent"],
+    });
+
+
     res.json({ token });
   } catch (e) {
     res.status(500).json({ error: e.message });

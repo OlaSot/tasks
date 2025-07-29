@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import taskRoutes from './routes/taskRoutes.js';
+import logRoutes from './routes/logRoutes.js';
+
 
 
 import authRoutes from './routes/authRoutes.js';
@@ -14,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/logs', logRoutes);
+app.set("trust proxy", true);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
